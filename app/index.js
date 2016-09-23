@@ -10,10 +10,21 @@
     const canvas = document.createElement('canvas');
     const context = canvas.getContext('2d');
 
-    const errorTolerance = 8;
-    const animationSpeed = 1;
-    const multiplier = 24;
-    const channelMax = 155;
+    const ERROR_TOLERANCE = 8;
+    const ANIMATION_SPEED = 1;
+    const MULTIPLIER = 24;
+    const CHANNEL_MAX = 155;
+
+    const STRING_RGB = 'rgb';
+    const STRING_PAREN_OPEN = '(';
+    const STRING_PAREN_CLOSE = ')';
+    const STRING_COMMA = ',';
+
+    const NUMBER_MINUS_ONE = -1;
+    const NUMBER_ZERO = 0;
+    const NUMBER_PLUS_ONE = +1;
+    const NUMBER_PLUS_TWO = +2;
+    const NUMBER_PLUS_THREE = +3;
 
     let containerSize = getContainerSize();
     let mousePosition = null;
@@ -83,7 +94,7 @@
     const startColor = color.make_color({
         saturation: 0.7,
         value: 0.6,
-        format: 'rgb'
+        format: STRING_RGB
     })[0];
 
     function createPixel(x, y, width, height) {
@@ -98,9 +109,9 @@
                 startColor.b
             ],
             _currentRGB: [
-                startColor.r + Math.round((errorTolerance / 2) - (Math.random() * errorTolerance)),
-                startColor.g + Math.round((errorTolerance / 2) - (Math.random() * errorTolerance)),
-                startColor.b + Math.round((errorTolerance / 2) - (Math.random() * errorTolerance))
+                startColor.r + Math.round((ERROR_TOLERANCE / 2) - (Math.random() * ERROR_TOLERANCE)),
+                startColor.g + Math.round((ERROR_TOLERANCE / 2) - (Math.random() * ERROR_TOLERANCE)),
+                startColor.b + Math.round((ERROR_TOLERANCE / 2) - (Math.random() * ERROR_TOLERANCE))
             ]
         };
 
@@ -116,13 +127,13 @@
 
         pixels.length = 0;
 
-        let x = Math.ceil(containerSize.width / multiplier);
+        let x = Math.ceil(containerSize.width / MULTIPLIER);
 
         while (x--) {
-            let y = Math.ceil(containerSize.height / multiplier);
+            let y = Math.ceil(containerSize.height / MULTIPLIER);
 
             while (y--) {
-                createPixel(x * multiplier, y * multiplier, multiplier, multiplier);
+                createPixel(x * MULTIPLIER, y * MULTIPLIER, MULTIPLIER, MULTIPLIER);
             }
         }
 
@@ -131,15 +142,16 @@
 
     setup();
 
-    window.addEventListener('resize', function () {
+    window.addEventListener('resize', () => {
         setup();
     });
 
     function getPixel(targetX, targetY) {
         let _i = pixels.length;
+        let _pixel;
 
         while (_i--) {
-            let _pixel = pixels[_i];
+            _pixel = pixels[_i];
 
             if (!_pixel) {
                 return;
@@ -164,42 +176,44 @@
         const _pixelX = _pixel.x;
         const _pixelY = _pixel.y;
 
-        const _direction = options.direction || [0, 0];
+        const _direction = options.direction || [NUMBER_ZERO, NUMBER_ZERO];
+        const _directionX = _direction[NUMBER_ZERO];
+        const _directionY = _direction[NUMBER_PLUS_ONE];
 
-        if (_direction[1] < 0) { // Ripple up
-            callback(_pixel, getPixel(_pixelX, _pixelY - multiplier), 0, -1);
+        if (_directionY < NUMBER_ZERO) { // Ripple up
+            callback(_pixel, getPixel(_pixelX, _pixelY - MULTIPLIER), NUMBER_ZERO, NUMBER_MINUS_ONE);
 
             // Ripple up left
-            if (_direction[0] < 0) {
-                callback(_pixel, getPixel(_pixelX - multiplier, _pixelY - multiplier), -1, -1);
+            if (_directionX < NUMBER_ZERO) {
+                callback(_pixel, getPixel(_pixelX - MULTIPLIER, _pixelY - MULTIPLIER), NUMBER_MINUS_ONE, NUMBER_MINUS_ONE);
             }
 
             // Ripple up right
-            if (_direction[0] > 0) {
-                callback(_pixel, getPixel(_pixelX + multiplier, _pixelY - multiplier), +1, -1);
+            if (_directionX > NUMBER_ZERO) {
+                callback(_pixel, getPixel(_pixelX + MULTIPLIER, _pixelY - MULTIPLIER), NUMBER_PLUS_ONE, NUMBER_MINUS_ONE);
             }
-        } else if (_direction[1] > 0) { // Ripple down
-            callback(_pixel, getPixel(_pixelX, _pixelY + multiplier), 0, +1);
+        } else if (_directionY > NUMBER_ZERO) { // Ripple down
+            callback(_pixel, getPixel(_pixelX, _pixelY + MULTIPLIER), NUMBER_ZERO, NUMBER_PLUS_ONE);
 
             // Ripple down left
-            if (_direction[0] < 0) {
-                callback(_pixel, getPixel(_pixelX - multiplier, _pixelY + multiplier), -1, +1);
+            if (_directionX < NUMBER_ZERO) {
+                callback(_pixel, getPixel(_pixelX - MULTIPLIER, _pixelY + MULTIPLIER), NUMBER_MINUS_ONE, NUMBER_PLUS_ONE);
             }
 
             // Ripple down right
-            if (_direction[0] > 0) {
-                callback(_pixel, getPixel(_pixelX + multiplier, _pixelY + multiplier), +1, +1);
+            if (_directionX > NUMBER_ZERO) {
+                callback(_pixel, getPixel(_pixelX + MULTIPLIER, _pixelY + MULTIPLIER), NUMBER_PLUS_ONE, NUMBER_PLUS_ONE);
             }
         }
 
         // Ripple left
-        if (_direction[0] < 0) {
-            callback(_pixel, getPixel(_pixelX - multiplier, _pixelY), -1, 0);
+        if (_directionX < NUMBER_ZERO) {
+            callback(_pixel, getPixel(_pixelX - MULTIPLIER, _pixelY), NUMBER_MINUS_ONE, NUMBER_ZERO);
         }
 
         // Ripple right
-        if (_direction[0] > 0) {
-            callback(_pixel, getPixel(_pixelX + multiplier, _pixelY), +1, 0);
+        if (_directionX > NUMBER_ZERO) {
+            callback(_pixel, getPixel(_pixelX + MULTIPLIER, _pixelY), NUMBER_PLUS_ONE, NUMBER_ZERO);
         }
     }
 
@@ -217,17 +231,17 @@
                 return;
             }
 
-            neighborPixel.rgb = [
-                Math.max(0, Math.min(channelMax,
-                    targetPixel.rgb[0] + Math.round((errorTolerance / 2) - (Math.random() * errorTolerance))
-                )),
-                Math.max(0, Math.min(channelMax,
-                    targetPixel.rgb[1] + Math.round((errorTolerance / 2) - (Math.random() * errorTolerance))
-                )),
-                Math.max(0, Math.min(channelMax,
-                    targetPixel.rgb[2] + Math.round((errorTolerance / 2) - (Math.random() * errorTolerance))
-                ))
-            ];
+            neighborPixel.rgb[NUMBER_ZERO] = Math.max(NUMBER_ZERO, Math.min(CHANNEL_MAX,
+                targetPixel.rgb[NUMBER_ZERO] + Math.round((ERROR_TOLERANCE / NUMBER_PLUS_TWO) - (Math.random() * ERROR_TOLERANCE))
+            ));
+
+            neighborPixel.rgb[NUMBER_PLUS_ONE] = Math.max(NUMBER_ZERO, Math.min(CHANNEL_MAX,
+                targetPixel.rgb[NUMBER_PLUS_ONE] + Math.round((ERROR_TOLERANCE / NUMBER_PLUS_TWO) - (Math.random() * ERROR_TOLERANCE))
+            ));
+
+            neighborPixel.rgb[NUMBER_PLUS_TWO] = Math.max(NUMBER_ZERO, Math.min(CHANNEL_MAX,
+                targetPixel.rgb[NUMBER_PLUS_TWO] + Math.round((ERROR_TOLERANCE / NUMBER_PLUS_TWO) - (Math.random() * ERROR_TOLERANCE))
+            ));
 
             ripple({
                 startX: neighborPixel.x,
@@ -250,20 +264,18 @@
             const _color = color.make_color({
                 saturation: 0.7,
                 value: 0.6,
-                format: 'rgb'
-            })[0];
+                format: STRING_RGB
+            })[NUMBER_ZERO];
 
-            _centerPixel.rgb = [
-                _color.r,
-                _color.g,
-                _color.b
-            ];
+            _centerPixel.rgb[NUMBER_ZERO] = _color.r;
+            _centerPixel.rgb[NUMBER_PLUS_ONE] = _color.g;
+            _centerPixel.rgb[NUMBER_PLUS_TWO] = _color.b;
 
             timeouts.push(setTimeout(function () {
                 ripple({
                     startX: _centerPosition.x,
                     startY: _centerPosition.y,
-                    direction: [1, 1]
+                    direction: [NUMBER_PLUS_ONE, NUMBER_PLUS_ONE]
                 }, rippleEffectColorSpread);
             }, 16 + (Math.random() * 250)));
 
@@ -271,7 +283,7 @@
                 ripple({
                     startX: _centerPosition.x,
                     startY: _centerPosition.y,
-                    direction: [-1, -1]
+                    direction: [NUMBER_MINUS_ONE, NUMBER_MINUS_ONE]
                 }, rippleEffectColorSpread);
             }, 16 + (Math.random() * 250)));
 
@@ -279,7 +291,7 @@
                 ripple({
                     startX: _centerPosition.x,
                     startY: _centerPosition.y,
-                    direction: [1, -1]
+                    direction: [NUMBER_PLUS_ONE, NUMBER_MINUS_ONE]
                 }, rippleEffectColorSpread);
             }, 16 + (Math.random() * 250)));
 
@@ -287,7 +299,7 @@
                 ripple({
                     startX: _centerPosition.x,
                     startY: _centerPosition.y,
-                    direction: [-1, 1]
+                    direction: [NUMBER_MINUS_ONE, NUMBER_PLUS_ONE]
                 }, rippleEffectColorSpread);
             }, 16 + (Math.random() * 250)));
         }
@@ -303,78 +315,96 @@
 
     function draw() {
         let _i = pixels.length;
+        let _pixel;
+
+        let _red = NUMBER_ZERO;
+        let _green = NUMBER_ZERO;
+        let _blue = NUMBER_ZERO;
+
+        let _currentRed = NUMBER_ZERO;
+        let _currentGreen = NUMBER_ZERO;
+        let _currentBlue = NUMBER_ZERO;
+
+        let _differences = NUMBER_ZERO;
+        let _random = NUMBER_ZERO;
 
         while (_i--) {
-            let _pixel = pixels[_i];
+            _pixel = pixels[_i];
+
+            _red = _pixel.rgb[NUMBER_ZERO];
+            _green = _pixel.rgb[NUMBER_PLUS_ONE];
+            _blue = _pixel.rgb[NUMBER_PLUS_TWO];
+
+            _currentRed = _pixel._currentRGB[NUMBER_ZERO];
+            _currentGreen = _pixel._currentRGB[NUMBER_PLUS_ONE];
+            _currentBlue = _pixel._currentRGB[NUMBER_PLUS_TWO];
 
             // Figure out how many channel differences there are. Eg. if
             // there's only one channel difference, it's thrice as fast
             // as when all are different
-            let _differences = 0;
+            _differences = NUMBER_ZERO;
 
-            if (_pixel._currentRGB[0] !== _pixel.rgb[0]) {
-                _differences += 1;
+            if (_currentRed !== _red) {
+                _differences += NUMBER_PLUS_ONE;
             }
 
-            if (_pixel._currentRGB[1] !== _pixel.rgb[1]) {
-                _differences += 1;
+            if (_currentGreen !== _green) {
+                _differences += NUMBER_PLUS_ONE;
             }
 
-            if (_pixel._currentRGB[2] !== _pixel.rgb[2]) {
-                _differences += 1;
+            if (_currentBlue !== _blue) {
+                _differences += NUMBER_PLUS_ONE;
             }
 
-            if (_pixel._currentRGB[0] > _pixel.rgb[0]) {
-                _pixel._currentRGB[0] -= animationSpeed + 3 - _differences;
+            if (_currentRed > _red) {
+                _pixel._currentRGB[NUMBER_ZERO] -= ANIMATION_SPEED + NUMBER_PLUS_THREE - _differences;
 
-                if (_pixel._currentRGB[0] < _pixel.rgb[0]) {
-                    _pixel._currentRGB[0] = _pixel.rgb[0];
+                if (_currentRed < _red) {
+                    _pixel._currentRGB[NUMBER_ZERO] = _red;
                 }
-            } else if (_pixel._currentRGB[0] < _pixel.rgb[0]) {
-                _pixel._currentRGB[0] += animationSpeed + 3 - _differences;
+            } else if (_currentRed < _red) {
+                _pixel._currentRGB[NUMBER_ZERO] += ANIMATION_SPEED + NUMBER_PLUS_THREE - _differences;
 
-                if (_pixel._currentRGB[0] > _pixel.rgb[0]) {
-                    _pixel._currentRGB[0] = _pixel.rgb[0];
-                }
-            }
-
-            if (_pixel._currentRGB[1] > _pixel.rgb[1]) {
-                _pixel._currentRGB[1] -= animationSpeed + 3 - _differences;
-
-                if (_pixel._currentRGB[1] < _pixel.rgb[1]) {
-                    _pixel._currentRGB[1] = _pixel.rgb[1];
-                }
-            } else if (_pixel._currentRGB[1] < _pixel.rgb[1]) {
-                _pixel._currentRGB[1] += animationSpeed + 3 - _differences;
-
-                if (_pixel._currentRGB[1] > _pixel.rgb[1]) {
-                    _pixel._currentRGB[1] = _pixel.rgb[1];
+                if (_currentRed > _red) {
+                    _pixel._currentRGB[NUMBER_ZERO] = _red;
                 }
             }
 
-            if (_pixel._currentRGB[2] > _pixel.rgb[2]) {
-                _pixel._currentRGB[2] -= animationSpeed + 3 - _differences;
+            if (_currentGreen > _green) {
+                _pixel._currentRGB[NUMBER_PLUS_ONE] -= ANIMATION_SPEED + NUMBER_PLUS_THREE - _differences;
 
-                if (_pixel._currentRGB[2] < _pixel.rgb[2]) {
-                    _pixel._currentRGB[2] = _pixel.rgb[2];
+                if (_currentGreen < _green) {
+                    _pixel._currentRGB[NUMBER_PLUS_ONE] = _green;
                 }
-            } else if (_pixel._currentRGB[2] < _pixel.rgb[2]) {
-                _pixel._currentRGB[2] += animationSpeed + 3 - _differences;
+            } else if (_currentGreen < _green) {
+                _pixel._currentRGB[NUMBER_PLUS_ONE] += ANIMATION_SPEED + NUMBER_PLUS_THREE - _differences;
 
-                if (_pixel._currentRGB[2] > _pixel.rgb[2]) {
-                    _pixel._currentRGB[2] = _pixel.rgb[2];
+                if (_currentGreen > _green) {
+                    _pixel._currentRGB[NUMBER_PLUS_ONE] = _green;
                 }
             }
 
-            const _random = Math.random();
+            if (_currentBlue > _blue) {
+                _pixel._currentRGB[NUMBER_PLUS_TWO] -= ANIMATION_SPEED + NUMBER_PLUS_THREE - _differences;
 
-            _pixel.rgb = [
-                Math.round(_pixel.rgb[0] + 1 - (_random * 2)),
-                Math.round(_pixel.rgb[1] + 1 - (_random * 2)),
-                Math.round(_pixel.rgb[2] + 1 - (_random * 2))
-            ];
+                if (_currentBlue < _blue) {
+                    _pixel._currentRGB[NUMBER_PLUS_TWO] = _blue;
+                }
+            } else if (_currentBlue < _blue) {
+                _pixel._currentRGB[NUMBER_PLUS_TWO] += ANIMATION_SPEED + NUMBER_PLUS_THREE - _differences;
 
-            context.fillStyle = `rgb(${_pixel._currentRGB.join(',')})`;
+                if (_currentBlue > _blue) {
+                    _pixel._currentRGB[NUMBER_PLUS_TWO] = _blue;
+                }
+            }
+
+            _random = Math.random();
+
+            _pixel.rgb[NUMBER_ZERO] = Math.round(_red + NUMBER_PLUS_ONE - (_random * NUMBER_PLUS_TWO));
+            _pixel.rgb[NUMBER_PLUS_ONE] = Math.round(_green + NUMBER_PLUS_ONE - (_random * NUMBER_PLUS_TWO));
+            _pixel.rgb[NUMBER_PLUS_TWO] = Math.round(_blue + NUMBER_PLUS_ONE - (_random * NUMBER_PLUS_TWO));
+
+            context.fillStyle = STRING_RGB + STRING_PAREN_OPEN + _pixel._currentRGB.join(STRING_COMMA) + STRING_PAREN_CLOSE;
             context.fillRect(_pixel.x, _pixel.y, _pixel.width, _pixel.height);
         }
     }
