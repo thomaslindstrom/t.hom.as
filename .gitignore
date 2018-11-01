@@ -1,4 +1,2 @@
 node_modules
-static/*
-!static/index.html
-!static/thomaslindstr_m.png
+.DS_Store
