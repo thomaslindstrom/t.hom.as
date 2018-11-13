@@ -1,0 +1,81 @@
+html, body {
+	width: 100%;
+	height: 100%;
+	margin: 0;
+	padding: 0;
+}
+
+html {
+    -webkit-font-smoothing: subpixel-antialiased;
+}
+
+.background {
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 10;
+	image-rendering: crisp-edges;
+	image-rendering: pixelated;
+	pointer-events: none;
+}
+
+.wrapper {
+	width: 100%;
+	height: 100%;
+	display: flex;
+}
+
+.content {
+	text-align: center;
+	margin: auto;
+}
+
+.title, .subtitle {
+	font-family: barlow, sans-serif;
+	font-style: italic;
+	margin: 0;
+	padding: 0;
+}
+
+.title {
+	font-size: 38px;
+	font-weight: 800;
+	letter-spacing: -0.03em;
+}
+
+.underscore {
+	letter-spacing: -0.11em;
+	line-height: 1em;
+	position: relative;
+	left: -4px;
+}
+
+.subtitle {
+	font-size: 25px;
+	font-weight: 500;
+	letter-spacing: -0.05em;
+	line-height: 1em;
+}
+
+.link {
+	transition: opacity 0.2s;
+	text-decoration: none;
+}
+
+.title .link {
+	color: #000;
+}
+
+.title .link:hover {
+	opacity: 0.5;
+}
+
+.subtitle .link {
+	color: #555;
+}
+
+.subtitle .link:hover {
+	opacity: 0.5;
+}

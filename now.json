@@ -1,0 +1,9 @@
+{
+	"version": 2,
+	"name": "t.hom.as",
+	"alias": ["t.hom.as"],
+	"public": true,
+	"builds": [
+		{"src": "package.json", "use": "@now/static-build"}
+	]
+}
