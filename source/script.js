@@ -9,13 +9,9 @@ canvas.width = canvasWidth;
 canvas.height = canvasHeight;
 
 function raf(callback) {
-	return (window.requestAnimationFrame
-		|| (window.webkitRequestAnimationFrame)
-		|| (window.mozRequestAnimationFrame)
-		|| (function (callback) {
-			window.setTimeout(callback, 16);
-		   })
-	).call(window, callback);
+	return (window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || (function (callback) {
+		window.setTimeout(callback, 16);
+	})).call(window, callback);
 }
 
 function createPixel(options) {
@@ -57,7 +53,8 @@ function createPixel(options) {
 	return pixel;
 }
 
-const pixels = [];
+const pixels = new Array(1000);
+let pixelsCount = pixels.length;
 
 function createRandomPixel(options) {
 	const size = Math.round(Math.random() * 5);
@@ -78,45 +75,57 @@ const pixelOptions = {
 	max: {x: canvasWidth, y: canvasHeight}
 };
 
-let pixelCount = 0;
-
 function pushRandomPixel(options) {
 	const randomPixel = createRandomPixel({...pixelOptions, ...options});
-	randomPixel.speed.y = Math.random();
+	randomPixel.speed.y = Math.random() / 4;
 
-	pixels.push(randomPixel);
-	pixelCount += 1;
-}
+	let i = pixelsCount;
+	let shouldPushToArray = true;
 
-while (pixelCount < canvasWidth) {
-	pushRandomPixel();
-}
+	while (i) {
+		i -= 1;
 
-function draw() {
-	context.clearRect(0, 0, canvasWidth, canvasHeight);
-
-	let pixelsLength = pixels.length;
-	let i = pixelsLength;
-
-	while (i -= 1) {
-		if (pixels[i] && (pixels[i].render === false)) {
-			pixels.splice(i, 1);
-			pixelsLength -= 1;
+		if (pixels[i] === undefined) {
+			pixels[i] = randomPixel;
+			shouldPushToArray = false;
+			break;
 		}
 	}
 
-	let y = 0;
-	let pixel;
+	if (shouldPushToArray) {
+		pixels.push(randomPixel);
+		pixelsCount += 1;
+	}
+}
 
-	while (y < pixelsLength) {
-		pixel = pixels[y];
+let initialPopulation = 1500;
+
+while (initialPopulation) {
+	pushRandomPixel();
+	initialPopulation -= 1;
+}
+
+setInterval(() => {
+	pushRandomPixel({y: 0});
+}, 100);
+
+function draw() {
+	context.clearRect(0, 0, canvasWidth, canvasHeight);
+	let i = pixelsCount;
+
+	while (i) {
+		i -= 1;
+		const pixel = pixels[i];
 
 		if (pixel) {
-			pixel.draw(context);
-			pixel.tick();
+			if (pixel.render === false) {
+				pixels[i] = undefined;
+				delete pixels[i];
+			} else {
+				pixel.draw(context);
+				pixel.tick();
+			}
 		}
-
-		y += 1;
 	}
 }
 
@@ -133,11 +142,3 @@ function loop() {
 }
 
 loop();
-
-setInterval(() => {
-	if (pixels.length > (canvasHeight * 2)) {
-		return;
-	}
-
-	pushRandomPixel({y: (Math.random() * 100) - 50});
-}, Math.min(30, (250 / canvasWidth) * 250));

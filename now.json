@@ -1,9 +1,7 @@
 {
 	"version": 2,
 	"name": "t.hom.as",
+	"scope": "thomaslindstr_m",
 	"alias": ["t.hom.as"],
-	"public": true,
-	"builds": [
-		{"src": "package.json", "use": "@now/static-build"}
-	]
+	"public": true
 }

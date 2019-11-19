@@ -1,29 +1,26 @@
 {
     "name": "t.hom.as",
-    "version": "1.0.0",
-    "description": "a website",
-    "main": "index.js",
     "repository": "git@github.com:thomaslindstrom/t.hom.as.git",
     "author": "Thomas Lindstrøm <t@hom.as>",
-    "license": "MIT",
+    "license": "UNLICENSED",
     "scripts": {
-        "dev": "parcel source/index.html --out-dir=dev",
-        "build": "parcel build source/index.html --out-dir=dist",
-        "now-build": "npm run build",
+        "build": "parcel build source/index.html --out-dir=public",
         "lint": "xo"
     },
     "dependencies": {
-        "parcel-bundler": "^1.10.3",
-        "random-material-color": "^1.0.3"
+        "parcel-bundler": "^1.12.4",
+        "random-material-color": "^1.0.5"
     },
     "devDependencies": {
       "babel-eslint": "^10.0.1",
-      "eslint-config-amphibian": "^1.0.0",
+      "eslint-config-amphibian": "^1.1.4",
       "eslint-config-xo-react": "^0.17.0",
       "eslint-plugin-react": "^7.11.1",
       "xo": "^0.23.0"
     },
     "xo": {
+        "envs": ["browser"],
+        "ignores": ["development", "public"],
         "parser": "babel-eslint",
         "extends": [
             "eslint-config-amphibian",
