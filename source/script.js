@@ -14,6 +14,8 @@ function raf(callback) {
 	})).call(window, callback);
 }
 
+const piTimesTwo = Math.PI * 2;
+
 function createPixel(options) {
 	const pixel = {...options, cycle: 0, render: true};
 
@@ -22,28 +24,25 @@ function createPixel(options) {
 		pixel.y += pixel.speed.y;
 
 		if ((pixel.x > pixel.max.x)
-		|| ((pixel.x + pixel.width) < pixel.min.x)
+		|| ((pixel.x + pixel.size) < pixel.min.x)
 		|| ((pixel.y > pixel.max.y))) {
 			pixel.render = false;
 		}
 	}
 
 	function draw(context) {
-		context.fillStyle = pixel.color;
-
-		let drawWidth = pixel.width;
-		let drawHeight = pixel.height;
+		let drawSize = pixel.size;
 		const adjustedCycle = pixel.cycle / 10;
 
-		if (drawWidth > adjustedCycle) {
-			drawWidth = Math.min(drawWidth, adjustedCycle);
+		if (drawSize > adjustedCycle) {
+			drawSize = Math.min(drawSize, adjustedCycle);
 		}
 
-		if (drawHeight > adjustedCycle) {
-			drawHeight = Math.min(drawHeight, adjustedCycle);
-		}
+		context.fillStyle = pixel.color;
+		context.beginPath();
+		context.arc(pixel.x, pixel.y, drawSize / 2, 0, piTimesTwo);
+		context.fill();
 
-		context.fillRect(pixel.x, pixel.y, drawWidth, drawHeight);
 		pixel.cycle += 1;
 	}
 
@@ -62,8 +61,7 @@ function createRandomPixel(options) {
 	return createPixel({
 		x: Math.round(Math.random() * canvasWidth) - size,
 		y: Math.round(Math.random() * canvasHeight) - size,
-		width: size,
-		height: size,
+		size,
 		color: getRandomColor(),
 		speed: {x: 0, y: 0},
 		...options

@@ -6,7 +6,14 @@ html, body {
 }
 
 html {
+	background: #fff;
     -webkit-font-smoothing: subpixel-antialiased;
+}
+
+@media (prefers-color-scheme: dark) {
+	html {
+		background: #0f0f0f;
+	}
 }
 
 .background {
@@ -68,12 +75,24 @@ html {
 	color: #000;
 }
 
+@media (prefers-color-scheme: dark) {
+	.title .link {
+		color: #fff;
+	}
+}
+
 .title .link:hover {
 	opacity: 0.5;
 }
 
 .subtitle .link {
 	color: #555;
+}
+
+@media (prefers-color-scheme: dark) {
+	.subtitle .link {
+		color: #888;
+	}
 }
 
 .subtitle .link:hover {
