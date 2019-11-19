@@ -2,9 +2,9 @@ import {getColor as getRandomColor} from 'random-material-color';
 
 const canvas = document.getElementById('canvas');
 const context = canvas.getContext('2d');
+
 const canvasWidth = canvas.offsetWidth;
 const canvasHeight = canvas.offsetHeight;
-
 canvas.width = canvasWidth;
 canvas.height = canvasHeight;
 
@@ -96,16 +96,23 @@ function pushRandomPixel(options) {
 	}
 }
 
-let initialPopulation = 1500;
+let initialPopulation = canvasWidth;
 
 while (initialPopulation) {
 	pushRandomPixel();
 	initialPopulation -= 1;
 }
 
-setInterval(() => {
-	pushRandomPixel({y: 0});
-}, 100);
+function birth() {
+	raf(() => {
+		setTimeout(() => {
+			pushRandomPixel({y: 0});
+			birth();
+		}, 100);
+	});
+}
+
+birth();
 
 function draw() {
 	context.clearRect(0, 0, canvasWidth, canvasHeight);
