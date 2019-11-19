@@ -25,7 +25,7 @@ function createPixel(options) {
 
 		if ((pixel.x > pixel.max.x)
 		|| ((pixel.x + pixel.size) < pixel.min.x)
-		|| ((pixel.y > pixel.max.y))) {
+		|| (((pixel.y + pixel.size) > pixel.max.y))) {
 			pixel.render = false;
 		}
 	}
