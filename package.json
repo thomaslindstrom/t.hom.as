@@ -12,7 +12,7 @@
         "random-material-color": "^1.0.5"
     },
     "devDependencies": {
-        "babel-eslint": "^10.0.1",
+        "babel-eslint": "^10.0.3",
         "eslint-config-amphibian": "^1.1.4",
         "eslint-config-xo-react": "^0.17.0",
         "eslint-plugin-react": "^7.11.1",
