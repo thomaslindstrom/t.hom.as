@@ -4,7 +4,7 @@
     "author": "Thomas Lindstrøm <t@hom.as>",
     "license": "UNLICENSED",
     "scripts": {
-        "build": "parcel build source/index.html --out-dir=public",
+        "build": "parcel build source/index.html --out-dir=public && cp -r files/* public",
         "lint": "xo"
     },
     "dependencies": {
